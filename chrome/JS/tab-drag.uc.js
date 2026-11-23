@@ -51,13 +51,16 @@
     st.tab.style.transform = `translate(${clamped}px, ${detaching ? 10 : 0}px)`;
     st.tab.style.opacity = detaching ? "0.6" : "";
     const r = st.rects[st.from];
-    const center = r.left + r.width / 2 + clamped;
-    // nuevo lugar = cuántas otras pestañas quedan a la izquierda del centro
-    let to = 0;
+    // Como en Chromium/Brave: la vecina se corre apenas el BORDE de la pestaña
+    // arrastrada cruza la mitad de la vecina (alcanza con mover media pestaña).
+    const left = r.left + clamped;
+    const right = r.right + clamped;
+    let to = st.from;
     st.tabs.forEach((t, i) => {
       if (i === st.from) return;
       const c = st.rects[i].left + st.rects[i].width / 2;
-      if (c < center) to++;
+      if (i > st.from && right > c) to++;
+      if (i < st.from && left < c) to--;
     });
     st.to = to;
     st.tabs.forEach((t, i) => {
