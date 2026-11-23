@@ -13,14 +13,17 @@
   const DETACH_Y = 80;   // px hacia abajo para separar en ventana nueva
   const ANIM = "transform 0.18s cubic-bezier(0.22, 1, 0.36, 1)";
 
+  // al agarrar el TEXTO del título, el evento viene de un nodo de texto (sin .closest)
+  const asElement = (n) => (n && n.nodeType === 3 ? n.parentElement : n);
   const normalTab = (t) => {
+    t = asElement(t);
     const tab = t?.closest?.("#navigator-toolbox .tabbrowser-tab");
     if (!tab || tab.pinned || tab.hasAttribute("zen-essential")) return null;
     if (!tab.parentElement?.classList?.contains("zen-workspace-normal-tabs-section")) return null;
     return tab;
   };
   const onButton = (t) =>
-    t?.closest?.(".tab-close-button, .tab-audio-button, .tab-reset-button, .tab-icon-overlay");
+    asElement(t)?.closest?.(".tab-close-button, .tab-audio-button, .tab-reset-button, .tab-icon-overlay");
 
   let st = null; // estado del arrastre
 
@@ -98,6 +101,7 @@
     const tab = normalTab(t);
     if (!tab) return;
     st = { tab, x0: e.clientX, y0: e.clientY, started: false, pointerId: e.pointerId };
+    window.getSelection?.()?.removeAllRanges();
   }, true);
 
   window.addEventListener("pointermove", (e) => {

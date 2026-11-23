@@ -759,3 +759,10 @@ tooltip {
 :root[hz-tab-dragging] #navigator-toolbox .tabbrowser-tab::after {
   opacity: 0 !important;   /* sin separadores mientras se reacomodan */
 }
+
+/* el titulo de la pestana no se selecciona ni se arrastra como texto */
+#navigator-toolbox .tabbrowser-tab :is(.tab-label, .tab-label-container, .tab-text) {
+  user-select: none !important;
+  -moz-user-select: none !important;
+  pointer-events: none !important;
+}
