@@ -21,7 +21,7 @@ Zen está pensado para usarse con las pestañas en una barra lateral vertical. Y
 - Se ocultan cuando estás en la pestaña que está sonando (como hace Zen).
 
 **Comportamiento**
-- Arrastrar pestañas para reordenarlas funciona en horizontal.
+- **Arrastrar pestañas como en Brave**: la pestaña sigue al mouse y las demás se corren con animación para hacerle lugar. Tirándola hacia abajo, fuera de la barra, se separa en una ventana nueva. Esc cancela.
 - **Essentials como accesos directos**: si la pestaña de ese sitio ya está abierta te lleva ahí; si no, abre una pestaña normal.
 - **Library** se cierra al hacer clic afuera.
 - Clic con la rueda en la barra de pestañas solo cierra pestañas (no abre pestañas nuevas por accidente).
@@ -60,6 +60,7 @@ Después abrí Zen y listo.
 |---|---|
 | `chrome/userChrome.css` | Todo el diseño: layout horizontal, colores del tema, tamaños. |
 | `chrome/JS/horizontal-tabs.uc.js` | Pone la tira de pestañas de Zen en modo horizontal, arregla el arrastre, el clic del medio, cierra Library al hacer clic afuera. |
+| `chrome/JS/tab-drag.uc.js` | Arrastre de pestañas horizontal (reemplaza el de Zen, pensado para la barra vertical). |
 | `chrome/JS/url-center.uc.js` | Calcula el espacio de cada lado para que la barra de direcciones quede centrada. |
 | `chrome/JS/media-volume.uc.js` | Barrita de volumen y que la tarjeta de música no te cambie de pestaña. |
 | `chrome/JS/essentials-shortcut.uc.js` | Essentials como accesos directos. |

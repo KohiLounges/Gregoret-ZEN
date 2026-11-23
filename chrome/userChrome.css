@@ -746,3 +746,16 @@ tooltip {
 .tabbrowser-tab:not([image]) .tab-icon-pending {
   display: none !important;
 }
+
+/* Arrastre de pestanas (tab-drag.uc.js): la que arrastras va por encima, con sombra */
+#navigator-toolbox .tabbrowser-tab[hz-dragging] {
+  z-index: 10 !important;
+  position: relative !important;
+}
+#navigator-toolbox .tabbrowser-tab[hz-dragging] .tab-background {
+  background: color-mix(in srgb, currentColor 22%, transparent) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+:root[hz-tab-dragging] #navigator-toolbox .tabbrowser-tab::after {
+  opacity: 0 !important;   /* sin separadores mientras se reacomodan */
+}
