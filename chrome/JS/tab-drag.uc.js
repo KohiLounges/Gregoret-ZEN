@@ -52,7 +52,7 @@
   const layout = (dx, detaching) => {
     const clamped = Math.min(Math.max(dx, st.minDx), st.maxDx);
     st.tab.style.transform = `translate(${clamped}px, ${detaching ? 10 : 0}px)`;
-    st.tab.style.opacity = detaching ? "0.6" : "";
+    st.tab.style.opacity = detaching ? "0.85" : "";
     const r = st.rects[st.from];
     // Como en Chromium/Brave: la vecina se corre apenas el BORDE de la pestaña
     // arrastrada cruza la mitad de la vecina (alcanza con mover media pestaña).

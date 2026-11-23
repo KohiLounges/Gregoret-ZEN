@@ -752,9 +752,15 @@ tooltip {
   z-index: 10 !important;
   position: relative !important;
 }
-#navigator-toolbox .tabbrowser-tab[hz-dragging] .tab-background {
-  background: color-mix(in srgb, currentColor 22%, transparent) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+/* Como Brave: la pestana arrastrada es SOLIDA (no transparente), del color de la
+   pestana activa, y queda apenas elevada sobre las demas */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential])[hz-dragging] .tab-background {
+  background: color-mix(in srgb, var(--zen-primary-color) 55%, var(--zen-main-browser-background, #1b1b1b)) !important;
+  opacity: 1 !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;
+}
+#navigator-toolbox .tabbrowser-tab[hz-dragging] {
+  opacity: 1 !important;
 }
 :root[hz-tab-dragging] #navigator-toolbox .tabbrowser-tab::after {
   opacity: 0 !important;   /* sin separadores mientras se reacomodan */
