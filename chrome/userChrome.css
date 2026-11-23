@@ -1,0 +1,748 @@
+/* Zen: pestañas horizontales arriba (v4, verificado en vivo).
+   Todo limitado a #navigator-toolbox / #nav-bar para no tocar Library ni otros paneles.
+   Para deshacer: borrar este archivo y reiniciar Zen. */
+
+:root {
+  --hz-tabrow-h: 40px;
+  --hz-navrow-h: 40px;
+}
+
+/* ---------- barra lateral -> franja arriba ---------- */
+#browser {
+  flex-direction: column !important;
+}
+
+#navigator-toolbox {
+  order: -1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: var(--hz-tabrow-h) !important;
+  min-height: var(--hz-tabrow-h) !important;
+  max-height: var(--hz-tabrow-h) !important;
+  padding: 0 6px !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  position: relative !important;
+  z-index: 10 !important;   /* encima de la barra de URL, para que los Essentials reciban clics */
+}
+
+#navigator-toolbox #titlebar,
+#navigator-toolbox #TabsToolbar,
+#navigator-toolbox #TabsToolbar > .toolbar-items,
+#navigator-toolbox #TabsToolbar-customization-target,
+#navigator-toolbox #tabbrowser-tabs,
+#navigator-toolbox #zen-tabs-wrapper,
+#navigator-toolbox #tabbrowser-arrowscrollbox,
+#navigator-toolbox zen-workspace[active],
+#navigator-toolbox zen-workspace .workspace-arrowscrollbox,
+#navigator-toolbox .zen-workspace-pinned-tabs-section,
+#navigator-toolbox .zen-workspace-normal-tabs-section {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: var(--hz-tabrow-h) !important;
+  min-height: 0 !important;
+  max-height: var(--hz-tabrow-h) !important;
+}
+
+#navigator-toolbox .zen-workspace-pinned-tabs-section {
+  flex: 0 0 auto !important;
+}
+
+#navigator-toolbox #tabbrowser-arrowscrollbox::part(scrollbox) {
+  flex-direction: row !important;
+}
+/* El scrollbox interno de Zen fuerza columna; lo "aplanamos" para que las
+   secciones (fijadas + normales) caigan directo en la fila. */
+/* El scrollbox de cada Space tiene orient="vertical" y Firefox fuerza columna
+   desde su hoja interna (no se puede pisar). Entonces: la sección de pestañas
+   normales es la fila, y las fijadas (no Essentials) se superponen a la izquierda. */
+#navigator-toolbox zen-workspace[active] {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: var(--hz-tabrow-h) !important;
+}
+#navigator-toolbox .zen-workspace-pinned-tabs-section:not(:has(tab)) {
+  display: none !important;
+}
+/* Con el script horizontal-tabs.uc.js las secciones (fijadas + normales)
+   van una al lado de la otra; las fijadas ocupan solo lo que necesitan. */
+#navigator-toolbox .zen-workspace-pinned-tabs-section:has(tab) {
+  position: static !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+#navigator-toolbox .zen-workspace-normal-tabs-section {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}#navigator-toolbox zen-workspace .workspace-arrowscrollbox {
+  overflow: hidden !important;
+  align-items: stretch !important;   /* es columna: estira la fila a todo el ancho */
+  justify-content: center !important;
+  width: 100% !important;
+  height: var(--hz-tabrow-h) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  translate: none !important;
+}
+#navigator-toolbox zen-workspace[active] {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#navigator-toolbox zen-workspace .zen-workspace-empty-space {
+  display: none !important;
+}
+
+/* ---------- pestañas ---------- */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab {
+  flex: 1 1 180px !important;
+  width: auto !important;
+  min-width: 70px !important;
+  max-width: 220px !important;
+  height: 34px !important;
+  margin: 0 2px !important;
+  padding: 0 !important;
+}
+
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab[pinned] {
+  flex: 0 0 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+}
+
+/* "+" para nueva pestaña: chico, al final */
+/* Pestanas estilo Brave: sin cajas, separador fino entre cada una,
+   la activa (y la que tiene el mouse) con fondo redondeado. */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) {
+  position: relative !important;
+  margin: 0 1px !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-background {
+  background: transparent !important;
+  border-radius: 8px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: background 0.15s ease !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]):hover .tab-background {
+  background: color-mix(in srgb, currentColor 10%, transparent) !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential])[selected] .tab-background {
+  background: color-mix(in srgb, currentColor 20%, transparent) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential])::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -2px !important;
+  top: calc(50% - 8px) !important;   /* centrado con el titulo */
+  height: 16px !important;
+  width: 1px !important;
+  background: color-mix(in srgb, currentColor 25%, transparent) !important;
+  pointer-events: none !important;
+}
+/* sin separador junto a la activa o la que tiene el mouse (como Brave) */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:is([selected], :hover)::after,
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:has(+ .tabbrowser-tab:is([selected], :hover))::after,
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:last-of-type::after {
+  display: none !important;
+}
+
+/* ---------- Barra de direcciones al abrirse ----------
+   Firefox la abre pegada arriba de la ventana (asume que es la primera fila).
+   Acá la bajamos a su fila real. */
+#urlbar[popover-open] {
+  inset-block-start: calc(var(--hz-tabrow-h) + 2px) !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox-periphery {
+  order: 999 !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: 34px !important;
+}
+#navigator-toolbox #tabs-newtab-button {
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 34px !important;
+}
+#navigator-toolbox #tabs-newtab-button :is(.toolbarbutton-text, label, .zen-newtab-sublabel-anchor) {
+  display: none !important;
+}
+
+/* ---------- ocultar lo que es solo de la barra vertical ---------- */
+#navigator-toolbox :is(
+  zen-workspace:not([active]),
+  .zen-current-workspace-indicator,
+  .pinned-tabs-container-separator,
+  #vertical-pinned-tabs-splitter,
+  #zen-expand-sidebar-button,
+  #zen-workspaces-button,
+  #zen-create-new-button,
+  #new-tab-button,
+  #alltabs-button,
+  #drag-to-pin-promo-card,
+  #zen-sidebar-top-buttons
+) {
+  display: none !important;
+}
+
+/* botón de Library y demás botones del pie: a la izquierda de la fila */
+#navigator-toolbox #zen-sidebar-foot-buttons {
+  order: -1 !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: var(--hz-tabrow-h) !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 0 4px 0 0 !important;
+  margin: 0 !important;
+}
+
+/* ---------- minimizar / maximizar / cerrar: arriba a la derecha, como Brave ---------- */
+#nav-bar .titlebar-buttonbox-container {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  height: var(--hz-tabrow-h) !important;
+  z-index: 50 !important;
+  align-items: center !important;
+}
+#navigator-toolbox {
+  /* no cubre la esquina de los botones, así reciben los clics */
+  width: calc(100% - 140px) !important;
+  max-width: calc(100% - 140px) !important;
+}
+
+/* ---------- fila de la URL ---------- */
+#nav-bar #urlbar-container {
+  margin-inline-end: 8px !important;
+}
+
+/* espacio vacío en la fila de la URL donde se dibujan Essentials + media */
+#nav-bar #PanelUI-button {
+  margin-inline-start: var(--hz-nav-slot, 230px) !important;
+}
+
+/* ---------- Essentials: en la fila de la URL, antes de "..." ---------- */
+#navigator-toolbox #zen-essentials {
+  position: fixed !important;
+  top: var(--hz-tabrow-h) !important;
+  right: 46px !important;  /* termina justo antes del botón "..." */
+  left: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 20 !important;
+}
+#navigator-toolbox #zen-essentials .zen-essentials-container {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 4px !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  translate: -100% 0 !important;  /* crece hacia la izquierda */
+}
+/* Essentials como "fichas" de Zen: cuadradito redondeado con fondo suave */
+#navigator-toolbox #zen-essentials .tabbrowser-tab {
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  height: 32px !important;
+  margin: 3px 0 0 !important;
+  padding: 0 !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab .tab-stack {
+  width: 38px !important;
+  height: 32px !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab .tab-background {
+  inset: 0 !important;
+  margin: 0 !important;
+  width: 38px !important;
+  height: 32px !important;
+  min-height: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: color-mix(in srgb, currentColor 14%, transparent) !important;
+  transition: background 0.15s ease !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab:hover .tab-background {
+  background: color-mix(in srgb, currentColor 20%, transparent) !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab[selected] .tab-background {
+  background: color-mix(in srgb, currentColor 28%, transparent) !important;
+  outline: 1px solid color-mix(in srgb, currentColor 18%, transparent) !important;
+  outline-offset: -1px !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab .tab-content {
+  padding: 0 !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab .tab-icon-stack {
+  margin: 0 !important;
+}
+#navigator-toolbox #zen-essentials .tabbrowser-tab .tab-icon-image {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* ---------- Descargas ----------
+   Zen abre la lista de descargas HACIA ARRIBA desde el botón de Library (pensado
+   para el pie de la barra lateral). Arriba de todo se iba fuera de la ventana:
+   ahora se despliega hacia abajo, y el iconito queda quieto sobre el botón. */
+#zen-sidebar-foot-buttons #zen-library-download-list {
+  top: calc(100% + 4px) !important;
+  bottom: auto !important;
+  left: 0 !important;
+  width: 340px !important;
+  z-index: 40 !important;
+  /* fondo propio, como un panel de Zen (antes quedaba transparente sobre la página) */
+  background: var(--arrowpanel-background, #2b2a33) !important;
+  color: var(--arrowpanel-color, inherit) !important;
+  border: 1px solid var(--arrowpanel-border-color, rgba(255,255,255,0.08)) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  padding: 6px !important;
+}
+#zen-sidebar-foot-buttons:is([zen-library-stack-open], [zen-library-stack-closing]) {
+  z-index: 60 !important;   /* la lista queda por encima de los controles de música */
+}
+#TabsToolbar-customization-target:is([zen-library-stack-open], [zen-library-stack-closing]) {
+  mask: none !important;   /* no esconder las pestañas mientras está abierta */
+}
+#zen-library-button > .toolbarbutton-badge-stack #library-button-badge {
+  --zen-library-badge-x: 16px !important;
+  --zen-library-badge-y: 2px !important;
+  --zen-library-badge-to-x: 16px !important;
+  --zen-library-badge-to-y: 2px !important;
+}
+
+/* ---------- Marco de la página: igual en ambos lados ----------
+   Zen saca el margen izquierdo porque ahí iba la barra lateral. */
+#zen-tabbox-wrapper {
+  margin: 0 !important;
+}
+#tabbrowser-tabbox #tabbrowser-tabpanels .browserSidebarContainer {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ---------- Library ----------
+   Zen, al abrir Library, empuja la página a un costado y esconde la barra lateral
+   (pensado para pestañas verticales). Acá lo dejamos quieto: Library se abre
+   como panel encima, a la izquierda, y el resto sigue visible. */
+#zen-appcontent-wrapper {
+  transform: none !important;
+}
+:root:has(zen-library[open]) #navigator-toolbox {
+  transform: none !important;
+  opacity: 1 !important;
+}
+zen-library {
+  top: calc(var(--hz-tabrow-h) + var(--hz-navrow-h)) !important;
+  bottom: 8px !important;
+  left: 8px !important;
+  z-index: 30 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: var(--zen-main-browser-background, #1b1b1b) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ---------- música / video: en la fila de pestañas, a la derecha ---------- */
+/* En la fila de la URL, justo después de atrás/adelante/recargar */
+#navigator-toolbox #zen-media-controls-toolbar:not([hidden]) {
+  display: flex !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;   /* deja la animacion de Zen */
+  position: fixed !important;
+  top: calc(var(--hz-tabrow-h) + 2px) !important;
+  left: 100px !important;
+  width: 300px !important;
+  height: calc(var(--hz-navrow-h) - 4px) !important;
+  max-height: calc(var(--hz-navrow-h) - 4px) !important;
+  overflow: hidden !important;
+  justify-content: center !important;
+  z-index: 20 !important;
+}
+/* Compacto: sin expandirse al pasar el mouse, y con el mismo tono que la interfaz */
+#zen-media-controls-toolbar .show-on-hover,
+#zen-media-controls-toolbar:hover .show-on-hover,
+#zen-media-controls-toolbar .zen-media-notes {
+  display: none !important;
+}
+#zen-media-controls-toolbar .zen-media-card {
+  height: 100% !important;
+  padding: 0 6px !important;
+  transform: none !important;
+  background: color-mix(in srgb, currentColor 8%, transparent) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+#zen-media-controls-toolbar .zen-media-card:hover {
+  background: color-mix(in srgb, currentColor 13%, transparent) !important;
+}
+/* Una sola tarjeta: la que está sonando (aunque sea la pestaña actual);
+   si ninguna suena, la primera disponible. */
+
+/* solo una tarjeta a la vez (la primera visible); en la pestana del audio Zen la oculta */
+#zen-media-controls-toolbar .zen-media-card:not([hidden]) ~ .zen-media-card {
+  display: none !important;
+}
+/* Todo en una fila: botones + barra para adelantar/retroceder */
+#zen-media-controls-toolbar .zen-media-main-vbox {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  height: 100% !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+#zen-media-controls-toolbar .zen-media-info-vbox {
+  display: none !important;
+}
+/* contenedor de la barra de progreso: ocupa el espacio que sobra, a la derecha */
+#zen-media-controls-toolbar .zen-media-main-vbox > vbox:not(.zen-media-info-vbox) {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  order: 1 !important;
+  height: auto !important;
+}
+#zen-media-controls-toolbar .zen-media-controls-hbox {
+  margin: 0 !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+  container-type: normal !important;   /* Zen le pone containment y queda en 0 de ancho */
+  width: auto !important;
+  min-width: 0 !important;
+  gap: 6px !important;
+  order: 0 !important;
+}
+#zen-media-controls-toolbar .zen-media-playback-buttons {
+  gap: 0 !important;
+}
+#zen-media-controls-toolbar .zen-media-card .zen-media-progress-hbox {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  order: 1 !important;
+  max-height: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  padding: 0 4px !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+  gap: 6px !important;
+}
+#zen-media-controls-toolbar .zen-media-progress-bar {
+  flex: 1 1 auto !important;
+  min-width: 60px !important;
+}
+
+/* Con Library abierto, no mostrar encima la lista rapida de descargas */
+:root:has(zen-library[open]) #zen-library-download-list {
+  display: none !important;
+}
+
+/* Contenido de cada pestana: icono y titulo centrados en la misma linea */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) :is(.tab-stack, .tab-content, .tab-background) {
+  height: 34px !important;
+  min-height: 0 !important;
+  margin-block: 0 !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-content {
+  padding-block: 0 !important;
+  align-items: center !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-label-container {
+  height: auto !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-label {
+  line-height: 20px !important;   /* 16px cortaba las letras con cola (g, p, y) */
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-label-container {
+  min-height: 20px !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .zen-tab-sublabel {
+  display: none !important;
+}
+/* Al arrastrar pestanas, Zen dibuja su linea indicadora pensada para vertical:
+   en horizontal sobra (las pestanas ya se corren solas). */
+#navigator-toolbox #zen-drag-indicator,
+#navigator-toolbox .zen-drag-indicator {
+  display: none !important;
+}
+/* Con la barra de marcadores visible, Library abre debajo de ella */
+:root:has(#PersonalToolbar:not([collapsed="true"])) zen-library {
+  top: calc(var(--hz-tabrow-h) + var(--hz-navrow-h) + 30px) !important;
+}
+/* Desplegable de la barra de direcciones: solido y con el color del tema de Zen */
+#urlbar[open] > .urlbar-background { /* tema */
+  /* mismo tono que la barra de arriba: el color principal de tu tema de Zen */
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--zen-primary-color) 58%, var(--zen-main-browser-background, #1b1b1b)),
+    color-mix(in srgb, var(--zen-primary-color) 38%, var(--zen-main-browser-background, #1b1b1b))) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid color-mix(in srgb, var(--zen-primary-color) 45%, transparent) !important;
+}
+/* Barrita de volumen (la agrega media-volume.uc.js) */
+/* Volumen estilo YouTube: al pasar el mouse por el parlante, la barrita se
+   despliega a su derecha (y la linea de progreso se achica, sin quedar tapada). */
+#zen-media-controls-toolbar .hz-volume {
+  position: static !important;
+  flex: 0 0 auto !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease, margin 0.2s ease !important;
+}
+#zen-media-controls-toolbar .zen-media-controls-hbox:has(.zen-media-mute-button:hover, .hz-volume:hover, .hz-volume:active) .hz-volume {
+  width: 64px !important;
+  margin: 0 6px 0 2px !important;
+  opacity: 1 !important;
+}
+/* La barra de la URL se desliza suave cuando aparecen/desaparecen los controles de musica */
+#nav-bar #urlbar-container {
+  transition: margin-inline-start 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+/* Barras de progreso y volumen: pista suave y relleno con el color del tema, bien visible */
+#zen-media-controls-toolbar .zen-media-progress-bar {
+  height: 4px !important;
+  border-radius: 4px !important;
+  background-color: color-mix(in srgb, currentColor 22%, transparent) !important;
+}
+#zen-media-controls-toolbar .zen-media-progress-bar::-moz-range-track {
+  height: 4px !important;
+  border-radius: 4px !important;
+  background: color-mix(in srgb, currentColor 22%, transparent) !important;
+}
+#zen-media-controls-toolbar .zen-media-progress-bar::-moz-range-progress {
+  height: 4px !important;
+  border-radius: 4px !important;
+  background: color-mix(in srgb, var(--zen-primary-color) 75%, currentColor) !important;
+}
+#zen-media-controls-toolbar .zen-media-progress-bar::-moz-range-thumb {
+  width: 10px !important;
+  height: 10px !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--zen-primary-color) 60%, white) !important;
+  opacity: 0 !important;
+  transition: opacity 0.15s ease !important;
+}
+#zen-media-controls-toolbar .zen-media-progress-bar:hover::-moz-range-thumb {
+  opacity: 1 !important;
+}
+/* ---------- Barra de direcciones SIEMPRE centrada en la ventana ---------- */
+#nav-bar { position: relative !important; }
+#nav-bar #urlbar-container {
+  position: absolute !important;
+  /* --hz-url-side lo calcula url-center.uc.js: mismo espacio a cada lado */
+  left: var(--hz-url-side, 420px) !important;
+  right: var(--hz-url-side, 420px) !important;
+  top: calc(50% - 21px) !important;
+  transform: none !important;
+  translate: none !important;
+  width: auto !important;
+  min-width: 320px !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transition: none !important;
+}
+/* los iconos de la derecha (descargas, etc.) quedan pegados a la derecha */
+#nav-bar toolbarspring { display: none !important; }
+#nav-bar #downloads-button { margin-inline-start: auto !important; }
+
+/* ---------- Controles de musica compactos (300px) ---------- */
+#zen-media-controls-toolbar .zen-media-focus-button {
+  display: none !important;                 /* el iconito del sitio sobra en compacto */
+}
+#zen-media-controls-toolbar .zen-media-playback-buttons {
+  max-width: none !important;
+  width: auto !important;
+  gap: 0 !important;
+}
+#zen-media-controls-toolbar .zen-media-controls-hbox {
+  gap: 2px !important;
+  position: relative !important;
+}
+#zen-media-controls-toolbar :is(.zen-media-current-time, .zen-media-duration) {
+  display: none !important;                 /* sin tiempos: queda solo la linea de progreso */
+}
+
+/* Avisos de Zen ("Copied current URL!", etc.): debajo de las barras, no encima
+   de los botones de la ventana ni de los Essentials */
+#zen-toast-container {
+  top: calc(var(--hz-tabrow-h) + var(--hz-navrow-h) + 12px) !important;
+  right: 16px !important;
+}
+:root:has(#PersonalToolbar:not([collapsed="true"])) #zen-toast-container {
+  top: calc(var(--hz-tabrow-h) + var(--hz-navrow-h) + 30px + 12px) !important;
+}
+/* Estrella para guardar la pagina en marcadores, dentro de la barra (como Brave).
+   Zen la esconde y la mete en el boton de datos del sitio. */
+#urlbar #star-button-box {
+  display: flex !important;
+}
+/* Titulo largo: se desvanece al final en vez de cortarse de golpe */
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-label-container {
+  overflow: hidden !important;
+}
+#navigator-toolbox #tabbrowser-arrowscrollbox .tabbrowser-tab:not([zen-essential]) .tab-label-container[textoverflow] {
+  mask-image: linear-gradient(to left, transparent 0, black 24px) !important;
+}
+/* ---------- Barra de marcadores estilo Brave ----------
+   Fila compacta, cada marcador como "pildora" con icono + nombre,
+   fondo suave al pasar el mouse. */
+#PersonalToolbar {
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 0 8px 4px !important;
+  background: transparent !important;
+}
+#PersonalToolbar #PlacesToolbarItems {
+  gap: 2px !important;
+  align-items: center !important;
+}
+#PersonalToolbar .bookmark-item {
+  height: 26px !important;
+  margin: 0 !important;
+  padding: 0 8px !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  gap: 6px !important;
+  transition: background 0.12s ease !important;
+}
+#PersonalToolbar .bookmark-item:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent) !important;
+}
+#PersonalToolbar .bookmark-item:is([open], :hover:active) {
+  background: color-mix(in srgb, currentColor 16%, transparent) !important;
+}
+#PersonalToolbar .bookmark-item > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+}
+#PersonalToolbar .bookmark-item > .toolbarbutton-text {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 160px !important;
+}
+/* marcadores sin nombre: solo el icono, cuadradito como en Brave */
+#PersonalToolbar .bookmark-item:not([label]),
+#PersonalToolbar .bookmark-item[label=""] {
+  padding: 0 5px !important;
+}
+#PersonalToolbar .bookmark-item:is(:not([label]), [label=""]) > .toolbarbutton-text {
+  display: none !important;
+}
+
+/* Library: sin iconito de descarga encima del boton (la descarga ya se ve
+   en el boton de descargas de la barra, como en Brave) */
+#zen-library-button #library-button-badge,
+#zen-library-button > .toolbarbutton-badge-stack > .toolbarbutton-badge {
+  display: none !important;
+}
+
+/* fila seleccionada del desplegable, con el color del tema */
+#urlbar .urlbarView-row:is([selected], :hover) > .urlbarView-row-inner {
+  background: color-mix(in srgb, var(--zen-primary-color) 45%, transparent) !important;
+}
+
+/* Paneles (descargas, menu "...", extensiones, etc.) con el color del tema,
+   igual que el desplegable de la barra de direcciones */
+:root {
+  --arrowpanel-background: color-mix(in srgb, var(--zen-primary-color) 48%, var(--zen-main-browser-background, #1b1b1b)) !important;
+  --arrowpanel-border-color: color-mix(in srgb, var(--zen-primary-color) 45%, transparent) !important;
+  --panel-separator-color: color-mix(in srgb, currentColor 14%, transparent) !important;
+}
+panel:is([type="arrow"], .panel-no-padding, #customizationui-widget-panel, #downloadsPanel, #appMenu-popup, #unified-extensions-panel, #zen-site-data-panel) {
+  --panel-background: var(--arrowpanel-background) !important;
+  --panel-background-color: var(--arrowpanel-background) !important;  /* el que usa de verdad el fondo */
+}
+
+/* La franja de arriba sirve para arrastrar la ventana (en las ventanas normales
+   y en las web apps como YouTube Music); pestanas y botones siguen clickeables */
+#navigator-toolbox,
+#navigator-toolbox #TabsToolbar,
+#navigator-toolbox #titlebar,
+#nav-bar {
+  -moz-window-dragging: drag !important;
+}
+#navigator-toolbox :is(.tabbrowser-tab, toolbarbutton, toolbaritem, #zen-essentials, #zen-media-controls-toolbar, input),
+#nav-bar :is(toolbarbutton, toolbaritem, #urlbar, input) {
+  -moz-window-dragging: no-drag !important;
+}
+
+/* Tooltips con el tema (antes: caja negra con borde blanco) */
+tooltip {
+  appearance: none !important;
+  background: color-mix(in srgb, var(--zen-primary-color) 48%, var(--zen-main-browser-background, #1b1b1b)) !important;
+  color: light-dark(#1b1b1b, #f2f2f5) !important;
+  border: 1px solid color-mix(in srgb, var(--zen-primary-color) 45%, transparent) !important;
+  border-radius: 8px !important;
+  padding: 5px 9px !important;
+  font-size: 12px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+/* separado del borde de la ventana y del cursor, asi se ve el cuadro entero */
+tooltip {
+  margin: 8px 0 0 10px !important;
+}
+
+/* aire contra el borde izquierdo de la ventana (flecha de atras y marcadores) */
+#nav-bar {
+  padding-inline-start: 8px !important;
+}
+#PersonalToolbar {
+  padding-inline-start: 10px !important;
+}
+
+/* Pestanas sin icono (nuevas sin cargar, restauradas): mismo icono que una
+   pestana nueva, en vez del cuadrado gris relleno */
+.tabbrowser-tab:not([image]) .tab-icon-image,
+.tabbrowser-tab[pending]:not([image]) .tab-icon-image {
+  content: url("chrome://global/skin/icons/defaultFavicon.svg") !important;
+  -moz-context-properties: fill, fill-opacity !important;
+  fill: currentColor !important;
+  fill-opacity: 0.75 !important;
+  display: flex !important;
+  background: none !important;
+}
+.tabbrowser-tab:not([image]) .tab-icon-pending {
+  display: none !important;
+}
